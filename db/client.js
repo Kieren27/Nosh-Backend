@@ -1,12 +1,11 @@
+require('dotenv').config(); // Load environment variables from .env
 const { Client } = require('pg');
 
-const DB_NAME = 'nosh-backend';
-
-const DB_URL = process.env.DATABASE_URL || `https://localhost:5432/${DB_NAME}`;
+const DB_NAME = 'nosh_backend';
 
 let client;
 
-// github actions client config  <--- ???
+// GitHub Actions client config
 if (process.env.CI) {
   client = new Client({
     host: 'localhost',
@@ -16,7 +15,13 @@ if (process.env.CI) {
     database: 'postgres',
   });
 } else {
-  client = new Client(DB_URL);
+  client = new Client({
+    host: 'localhost',
+    port: 5432,
+    user: 'postgres',
+    password: process.env.DB_PASSWORD, // Use the password from .env
+    database: DB_NAME,
+  });
 }
 
 module.exports = client;
